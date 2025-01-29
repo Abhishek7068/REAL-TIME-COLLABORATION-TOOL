@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Collaborative Editor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        const ws = new WebSocket('ws://localhost:8080'); // Connect to WebSocket server
+        let timeout = null;
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Received update:", data); // Debugging log
+            if (data.type === 'init' || data.type === 'update') {
+                document.getElementById('editor').value = data.content; // Update text area
+                document.getElementById('status').innerText = "Updated at: " + new Date().toLocaleTimeString(); // Show update timestamp
+                document.getElementById('save-status').innerText = "Saved";
+            }
+        };
+        
+        function sendUpdate() {
+            clearTimeout(timeout); // Clear previous timeout
+            document.getElementById('save-status').innerText = "Saving...";
+            
+            timeout = setTimeout(() => {
+                const content = document.getElementById('editor').value;
+                ws.send(JSON.stringify({ type: 'update', content })); // Send updated content
+                document.getElementById('save-status').innerText = "Saved";
+            }, 500); // Delay update to ensure real-time save only after user stops typing
+        }
+    </script>
+</head>
+<body>
+    <div id="header">
+        <h1>Real-time Collaborative Editor</h1>
+        <p id="status">Waiting for updates...</p> <!-- Status update display -->
+        <p id="save-status">Not saved</p> <!-- Save status display -->
+        <textarea id="editor" oninput="sendUpdate()" rows="10" cols="50"></textarea>
+    </div>
+</body>
+</html>

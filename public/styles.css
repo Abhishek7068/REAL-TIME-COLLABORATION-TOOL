@@ -1,0 +1,52 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    
+}
+
+header{
+
+    padding: 400px;
+    background-color: azure;
+}
+
+div{
+    text-align: center;
+    padding: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    
+    background-color: azure;
+}
+
+div h1{
+   font-size: 60px;
+   font-weight: 600;
+   margin-bottom: 30px;
+   width: fit-content;
+     
+}
+div p{
+    margin-bottom: 30px;
+}
+
+#status, #save-status{
+    font-size: 20px;
+    font-weight: 500;
+} 
+
+#editor{
+    border: 2px solid grey;
+    width: 800px;
+    height: 300px;
+    padding: 30px;
+    font-size: 15px;
+    font-weight: 400;
+    color: black;
+    background-color: white;
+    
+
+}
