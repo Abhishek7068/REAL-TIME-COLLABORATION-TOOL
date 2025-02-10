@@ -65,4 +65,4 @@ This project serves as a foundation for more advanced collaborative applications
 
 ## OUTPUT
 
-
+![Image](https://github.com/user-attachments/assets/7cf30dfb-ca14-4cb2-81ab-93d5b4be3971)
