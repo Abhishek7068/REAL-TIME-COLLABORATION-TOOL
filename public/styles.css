@@ -6,7 +6,7 @@
 }
 
 header{
-
+    width: 80%;
     padding: 400px;
     background-color: azure;
 }
@@ -41,12 +41,27 @@ div p{
 #editor{
     border: 2px solid grey;
     width: 800px;
-    height: 300px;
+    resize: none;
+    height: 300px;    
     padding: 30px;
     font-size: 15px;
     font-weight: 400;
     color: black;
     background-color: white;
+    margin-bottom: 20px;
     
+}
 
+button{
+    border: none;
+    border-radius: 5px;
+    height: 30px;
+    width: 100px;
+   
+    background-color: aquamarine;
+}
+a{
+    text-align: center;
+    text-decoration: none;
+    color: black;
 }

@@ -6,37 +6,34 @@ const path = require('path'); // Import path module to serve frontend files
 const app = express(); // Initialize Express application
 const server = http.createServer(app); // Create an HTTP server using Express
 const wss = new WebSocket.Server({ server }); // Create a WebSocket server attached to the HTTP server
-
-
-
 const fs = require("fs");
 
-function saveToFile(content){
-    fs.writeFileSync('document.txt', content, 'utf-8');
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/textfile', express.static(path.join(__dirname, 'textfile')));
+const filePath = path.join(__dirname, 'textfile', 'document.txt');
+
+if (!fs.existsSync(path.dirname(filePath))) {
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
 }
-
-
-
+function saveToFile(content){
+    fs.writeFileSync(filePath, content, 'utf-8');
+}
 
 let documentData = ""; // Variable to store the shared document content
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Listen for new WebSocket connections
 wss.on('connection', (ws) => {
     // Send the current document state to the newly connected client
     ws.send(JSON.stringify({ type: 'init', content: documentData }));
     
     // Listen for messages from clients
     ws.on('message', (message) => {
-        const data = JSON.parse(message); // Parse received message as JSON
-        if (data.type === 'update') { // Check if message type is 'update'
-            documentData = data.content; // Update document data with received content
+        const data = JSON.parse(message); 
+        if (data.type === 'update') { 
+            documentData = data.content; 
             
             saveToFile(documentData);
             
-            broadcast(documentData, ws); // Broadcast the update to other clients
+            broadcast(documentData, ws); 
         }
     });
 });
@@ -44,8 +41,8 @@ wss.on('connection', (ws) => {
 // Function to broadcast updates to all connected clients except the sender
 function broadcast(content, sender) {
     wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) { // Ensure the client is open
-            client.send(JSON.stringify({ type: 'update', content })); // Send updated content to clients
+        if (client.readyState === WebSocket.OPEN) { 
+            client.send(JSON.stringify({ type: 'update', content }));
         }
     });
 }
