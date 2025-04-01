@@ -9,8 +9,7 @@ const wss = new WebSocket.Server({ server }); // Create a WebSocket server attac
 const fs = require("fs");
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/public/textfile', express.static(path.join(__dirname, 'textfile')));
-const filePath = path.join(__dirname, 'textfile', 'document.txt');
+const filePath = path.join(__dirname, 'public', 'document.txt');
 
 if (!fs.existsSync(path.dirname(filePath))) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
