@@ -9,7 +9,7 @@ const wss = new WebSocket.Server({ server }); // Create a WebSocket server attac
 const fs = require("fs");
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/textfile', express.static(path.join(__dirname, 'textfile')));
+app.use('/public/textfile', express.static(path.join(__dirname, 'textfile')));
 const filePath = path.join(__dirname, 'textfile', 'document.txt');
 
 if (!fs.existsSync(path.dirname(filePath))) {
