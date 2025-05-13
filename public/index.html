@@ -1,43 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Collaborative Editor</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        const ws = new WebSocket('ws://localhost:8080'); // Connect to WebSocket server
-        let timeout = null;
-        
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log("Received update:", data); // Debugging log
-            if (data.type === 'init' || data.type === 'update') {
-                document.getElementById('editor').value = data.content; // Update text area
-                document.getElementById('status').innerText = "Updated at: " + new Date().toLocaleTimeString(); // Show update timestamp
-                document.getElementById('save-status').innerText = "Saved";
-            }
-        };
-        
-        function sendUpdate() {
-            clearTimeout(timeout); // Clear previous timeout
-            document.getElementById('save-status').innerText = "Saving...";
-            
-            timeout = setTimeout(() => {
-                const content = document.getElementById('editor').value;
-                ws.send(JSON.stringify({ type: 'update', content })); // Send updated content
-                document.getElementById('save-status').innerText = "Saved";
-            }, 500); // Delay update to ensure real-time save only after user stops typing
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real-time Collaborative Editor</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    const ws = new WebSocket('ws://localhost:8080');
+    let timeout = null;
+    let lastSentContent = "";
+    let lastReceivedContent = "";
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const editor = document.getElementById('editor');
+
+      if (data.type === 'init' || data.type === 'update') {
+        const currentContent = editor.value;
+
+        if (data.content !== currentContent && data.content !== lastSentContent) {
+          editor.value = data.content;
+
+          // Force cursor to end of text
+          const end = editor.value.length;
+          editor.selectionStart = end;
+          editor.selectionEnd = end;
         }
-    </script>
+
+        lastReceivedContent = data.content;
+
+        document.getElementById('status').innerText =
+          "Updated at: " + new Date().toLocaleTimeString();
+        document.getElementById('save-status').innerText = "Saved";
+      }
+    };
+
+    function sendUpdate() {
+      clearTimeout(timeout);
+      document.getElementById('save-status').innerText = "Saving...";
+
+      timeout = setTimeout(() => {
+        const editor = document.getElementById('editor');
+        const content = editor.value;
+
+        if (content !== lastSentContent) {
+          lastSentContent = content;
+          ws.send(JSON.stringify({ type: 'update', content }));
+        }
+
+        document.getElementById('save-status').innerText = "Saved";
+      }, 300);
+    }
+  </script>
 </head>
 <body>
-    <div id="header">
-        <h1>Real-time Collaborative Editor</h1>
-        <p id="status">Waiting for updates...</p> <!-- Status update display -->
-        <p id="save-status">Not saved</p> <!-- Save status display -->
-        <textarea id="editor" oninput="sendUpdate()" rows="10" cols="50"></textarea>
-        <button><a href="./document.txt" download="">Download File</a></button>
-    </div>
+  <div id="header">
+    <h1>Real-time Collaborative Editor</h1>
+    <p id="status">Waiting for updates...</p>
+    <p id="save-status">Not saved</p>
+    <textarea id="editor" oninput="sendUpdate()" rows="10" cols="50" autofocus></textarea>
+    <button><a href="./document.txt" download>Download File</a></button>
+  </div>
 </body>
 </html>
