@@ -6,7 +6,10 @@
   <title>Real-time Collaborative Editor</title>
   <link rel="stylesheet" href="styles.css" />
   <script>
-    const ws = new WebSocket('ws://localhost:8080');
+    // const ws = new WebSocket('ws://localhost:8080');
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${protocol}://${location.host}`);
+
     let timeout = null;
     let lastSentContent = "";
     let lastReceivedContent = "";
